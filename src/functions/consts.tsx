@@ -1,0 +1,9 @@
+export const ESTADOS_MENU = {
+    NEW_ACTION:0,
+    NEW_CATEGORY:-1,
+    LIST_ACTIONS:-2,
+    LIST_CATEGORY:-3,
+    EDIT_ACTION:-4,
+    MENU_UTILS:-5
+}
+

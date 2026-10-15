@@ -1,0 +1,12 @@
+.action_item_class{
+    display: grid;
+    grid-template-columns:1fr 1fr 1fr;
+    border: 1px solid white;
+    padding: 16px;
+    border-radius: 10px;
+}
+
+.env_params_form{
+    display: grid;
+    grid-template-columns:1fr 1fr 20px;
+}
