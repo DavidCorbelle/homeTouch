@@ -14,6 +14,7 @@ type MenuActionItem = {
     command: string,
     params: Array<string>,
     env_params: Array<EnvParamsCommand>,
+    [key: string]: any,
 }
 
 
