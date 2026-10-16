@@ -14,9 +14,9 @@ pub async fn get_all_actions() -> Result<Vec<MenuAction>, sqlx::Error> {
     if select_result.is_ok() {
         let result_data = select_result?;
         for i in result_data {
-
-            let action_data_string: String= i.get("action_data");
-            let action_data_parsed:Vec<MenuActionItem> = serde_json::from_str(&action_data_string).unwrap();
+            let action_data_string: String = i.get("action_data");
+            let action_data_parsed: Vec<MenuActionItem> =
+                serde_json::from_str(&action_data_string).unwrap();
             result.push(MenuAction {
                 action_id: i.get("action_id"),
                 category_id: i.get("category_id"),
@@ -29,11 +29,11 @@ pub async fn get_all_actions() -> Result<Vec<MenuAction>, sqlx::Error> {
     Ok(result)
 }
 
-pub async fn save_action(action_string: String, id_action:u32) -> Result<String, ()> {
+pub async fn save_action(action_string: String, id_action: u32) -> Result<String, ()> {
     let con: SqlitePool = get_connection().await?;
     let new_action: MenuAction = serde_json::from_str(action_string.as_str()).unwrap();
     let action_data_string = serde_json::to_string(&new_action.action_data).unwrap();
-    if id_action==0 {
+    if id_action == 0 {
         let insert_result:Result<SqliteQueryResult, sqlx::Error> = sqlx::query(
             "INSERT INTO action_commands (category_id , action_name , action_data , img_base64) VALUES ($1,$2,$3,$4)",
         )
@@ -48,8 +48,7 @@ pub async fn save_action(action_string: String, id_action:u32) -> Result<String,
         } else {
             Err(())
         }
-    }else{
-
+    } else {
         if new_action.img_base64.is_some() {
             let update_result:Result<SqliteQueryResult, sqlx::Error>= sqlx::query("UPDATE action_commands SET category_id = $2, action_name = $3, action_data = $4, img_base64 = $5 WHERE action_id = $1")
                 .bind(id_action)
@@ -64,7 +63,7 @@ pub async fn save_action(action_string: String, id_action:u32) -> Result<String,
             } else {
                 Err(())
             }
-        }else{
+        } else {
             let update_result:Result<SqliteQueryResult, sqlx::Error>= sqlx::query("UPDATE action_commands SET category_id = $2, action_name = $3, action_data = $4 WHERE action_id = $1")
                 .bind(id_action)
                 .bind(new_action.category_id)
@@ -78,22 +77,17 @@ pub async fn save_action(action_string: String, id_action:u32) -> Result<String,
                 Err(())
             }
         }
-
-
     }
 }
 
-pub async fn delete_action_bd(action_id:u32){
+pub async fn delete_action_bd(action_id: u32) {
     let con: SqlitePool = get_connection().await.unwrap();
-    let _result: SqliteQueryResult = sqlx::query(
-        "DELETE FROM action_commands WHERE action_id=$1",
-    )
+    let _result: SqliteQueryResult = sqlx::query("DELETE FROM action_commands WHERE action_id=$1")
         .bind(action_id)
         .execute(&con)
         .await
         .unwrap();
 }
-
 
 pub async fn invoke_action_bd(action_id: u32) {
     let con: SqlitePool = get_connection().await.unwrap();
@@ -106,20 +100,20 @@ pub async fn invoke_action_bd(action_id: u32) {
         let result_data = select_result.unwrap();
         if result_data.len() == 1 {
             let action_bd = result_data.get(0).unwrap();
-            let command_actions: Vec<MenuActionItem> = serde_json::from_str( action_bd.get("action_data")).unwrap();
+            let command_actions: Vec<MenuActionItem> =
+                serde_json::from_str(action_bd.get("action_data")).unwrap();
             for i in command_actions {
                 let mut action_spawn: Command = Command::new(&i.command);
                 for arg in i.params {
                     action_spawn.arg(arg);
                 }
                 for env_param in i.env_params {
-                    if env_param.key.len()>0 && env_param.value.len()>0 {
+                    if env_param.key.len() > 0 && env_param.value.len() > 0 {
                         action_spawn.env(env_param.key, env_param.value);
                     }
                 }
                 let _ = action_spawn.spawn();
             }
-
         }
     }
 }

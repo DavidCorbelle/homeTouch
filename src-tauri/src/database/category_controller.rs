@@ -37,14 +37,12 @@ pub async fn save_category(category_string: String) -> Result<String, ()> {
     }
 }
 
-pub async fn delete_category_bd(category_id:u32){
+pub async fn delete_category_bd(category_id: u32) {
     let con: SqlitePool = get_connection().await.unwrap();
-    let _result: SqliteQueryResult = sqlx::query(
-        "DELETE FROM category_commands WHERE category_id=$1",
-    )
-        .bind(category_id)
-        .execute(&con)
-        .await
-        .unwrap();
+    let _result: SqliteQueryResult =
+        sqlx::query("DELETE FROM category_commands WHERE category_id=$1")
+            .bind(category_id)
+            .execute(&con)
+            .await
+            .unwrap();
 }
-

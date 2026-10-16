@@ -1,34 +1,16 @@
-use std::{env, process::Command};
-use std::collections::HashMap;
-use tauri::{AppHandle, Emitter};
+mod database;
 mod migrations;
 mod structs;
-use structs::structs_custom::{EnvParamsCommand, MenuCategory};
 
-mod database;
-use crate::database::action_controller::{delete_action_bd, get_all_actions, invoke_action_bd, save_action};
+use crate::database::action_controller::{
+    delete_action_bd, get_all_actions, invoke_action_bd, save_action,
+};
 use crate::database::category_controller::{delete_category_bd, get_all_category, save_category};
 use crate::database::config_controller::{get_custom_config, save_config_bd};
 use crate::structs::structs_custom::{AppCustomConfig, MenuAction};
-
-#[tauri::command]
-fn start_obs() {
-    let mut output = Command::new("obs");
-    let array_env: [EnvParamsCommand; 2] = [
-        EnvParamsCommand {
-            key: String::from("RUST_BACKTRACE"),
-            value: String::from("1"),
-        },
-        EnvParamsCommand {
-            key: String::from("QT_QPA_PLATFORM"),
-            value: String::from("xcb"),
-        },
-    ];
-    for env in array_env.iter() {
-        output.env(env.key.clone(), env.value.clone());
-    }
-    let _end = output.spawn();
-}
+use std::collections::HashMap;
+use structs::structs_custom::MenuCategory;
+use tauri::{AppHandle, Emitter};
 
 #[tauri::command]
 async fn return_category_list() -> Result<Vec<MenuCategory>, ()> {
@@ -73,42 +55,39 @@ async fn invoke_action(action_id: u32) {
 }
 
 #[tauri::command]
-async fn delete_action(action_id: u32, app:AppHandle) -> Result<String, ()> {
+async fn delete_action(action_id: u32, app: AppHandle) -> Result<String, ()> {
     let _output = delete_action_bd(action_id).await;
     let _emit = app.emit("app-updated", "STREAMER_TOKEN_TYPE");
     Ok(String::from("command deleted"))
 }
 
 #[tauri::command]
-async fn delete_category(category_id: u32, app:AppHandle) -> Result<String, ()> {
+async fn delete_category(category_id: u32, app: AppHandle) -> Result<String, ()> {
     let _output = delete_category_bd(category_id).await;
     let _emit = app.emit("app-updated", "STREAMER_TOKEN_TYPE");
     Ok(String::from("command deleted"))
 }
 
 #[tauri::command]
-async fn get_config() -> Result<AppCustomConfig, ()>{
+async fn get_config() -> Result<AppCustomConfig, ()> {
     let output = get_custom_config().await;
-    if(output.is_ok()){
-        Ok(output.unwrap())
-    }else {
+    if output.is_ok() {
+        Ok(output?)
+    } else {
         Err(())
     }
-
 }
 
 #[tauri::command]
-async fn save_config(config_update:HashMap<String,String>, app:AppHandle) -> Result<String, ()>{
+async fn save_config(config_update: HashMap<String, String>, app: AppHandle) -> Result<String, ()> {
     let _output = save_config_bd(config_update).await;
-    if(_output.is_ok()){
+    if _output.is_ok() {
         let _emit = app.emit("app-updated", "STREAMER_TOKEN_TYPE");
         Ok(String::from("config saved"))
-    }else {
+    } else {
         Err(())
     }
-
 }
-
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -121,7 +100,6 @@ pub fn run() {
                 .build(),
         )
         .invoke_handler(tauri::generate_handler![
-            start_obs,
             return_category_list,
             save_category_tauri,
             return_action_list,

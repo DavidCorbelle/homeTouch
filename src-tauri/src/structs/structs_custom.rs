@@ -11,7 +11,7 @@ pub struct MenuAction {
     pub action_id: u32,
     pub category_id: u32,
     pub action_name: String,
-    pub action_data:Vec<MenuActionItem>,
+    pub action_data: Vec<MenuActionItem>,
     pub img_base64: Option<String>,
 }
 
