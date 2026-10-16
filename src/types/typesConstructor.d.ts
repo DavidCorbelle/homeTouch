@@ -28,10 +28,11 @@ type MenuCategory = {
     category_name: string,
 }
 
-type PlayerContainer = {
-    player:any
+type BodyStyles ={
+    key:string,
+    value: string,
 }
 
-type TwitchIframeContainer ={
-    Twitch:any
+type AppCustomConfig = {
+    background_image: String,
 }

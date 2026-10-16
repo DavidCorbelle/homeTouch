@@ -4,6 +4,7 @@ export const ESTADOS_MENU = {
     LIST_ACTIONS:-2,
     LIST_CATEGORY:-3,
     EDIT_ACTION:-4,
-    MENU_UTILS:-5
+    MENU_UTILS:-5,
+    MENU_CONFIG:-6,
 }
 

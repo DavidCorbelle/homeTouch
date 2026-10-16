@@ -1,4 +1,5 @@
 use std::{env, process::Command};
+use std::collections::HashMap;
 use tauri::{AppHandle, Emitter};
 mod migrations;
 mod structs;
@@ -7,7 +8,8 @@ use structs::structs_custom::{EnvParamsCommand, MenuCategory};
 mod database;
 use crate::database::action_controller::{delete_action_bd, get_all_actions, invoke_action_bd, save_action};
 use crate::database::category_controller::{delete_category_bd, get_all_category, save_category};
-use crate::structs::structs_custom::MenuAction;
+use crate::database::config_controller::{get_custom_config, save_config_bd};
+use crate::structs::structs_custom::{AppCustomConfig, MenuAction};
 
 #[tauri::command]
 fn start_obs() {
@@ -84,6 +86,29 @@ async fn delete_category(category_id: u32, app:AppHandle) -> Result<String, ()> 
     Ok(String::from("command deleted"))
 }
 
+#[tauri::command]
+async fn get_config() -> Result<AppCustomConfig, ()>{
+    let output = get_custom_config().await;
+    if(output.is_ok()){
+        Ok(output.unwrap())
+    }else {
+        Err(())
+    }
+
+}
+
+#[tauri::command]
+async fn save_config(config_update:HashMap<String,String>, app:AppHandle) -> Result<String, ()>{
+    let _output = save_config_bd(config_update).await;
+    if(_output.is_ok()){
+        let _emit = app.emit("app-updated", "STREAMER_TOKEN_TYPE");
+        Ok(String::from("config saved"))
+    }else {
+        Err(())
+    }
+
+}
+
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -103,7 +128,9 @@ pub fn run() {
             save_action_tauri,
             invoke_action,
             delete_action,
-            delete_category
+            delete_category,
+            get_config,
+            save_config
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

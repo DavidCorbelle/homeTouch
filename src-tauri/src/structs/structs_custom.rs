@@ -27,3 +27,8 @@ pub struct EnvParamsCommand {
     pub key: String,
     pub value: String,
 }
+
+#[derive(Deserialize, Serialize)]
+pub struct AppCustomConfig {
+    pub background_image: Option<String>,
+}

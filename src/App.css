@@ -26,8 +26,8 @@
   margin: 0;
   padding-top: 5vh;
   display: flex;
+  height: calc(100vh - 16px - 5vh);
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   text-align: center;
 }
@@ -151,7 +151,7 @@ button {
 .buttonBotoneraCabecera {
   background-color: darkgreen;
   border: 1px solid white;
-  width: 128px;
+  width: 160px;
 }
 
 .playlist-container iframe {

@@ -20,7 +20,14 @@ pub fn get_migrations() -> Vec<Migration> {
             sql:"ALTER TABLE action_commands ADD action_data TEXT;UPDATE action_commands SET action_data = CONCAT('[{ \"command\":\"', command,'\", \"params\":', params, ', \"env_params\":', env_params, '}]' ) WHERE action_id != 0;ALTER TABLE action_commands DROP command;ALTER TABLE action_commands DROP params;ALTER TABLE action_commands DROP env_params;",
             kind:MigrationKind::Up
 
+        },
+        Migration{
+            version:4,
+            description:"add config table",
+            sql:"CREATE TABLE config (key TEXT UNIQUE, value TEXT)",
+            kind:MigrationKind::Up
         }
+
 	
     ];
     return migrations;
