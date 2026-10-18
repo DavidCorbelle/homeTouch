@@ -11,6 +11,9 @@ import {ListActions} from "./components/botonera_actions/ListActions.tsx";
 import {UtilsActions} from "./components/botonera_actions/UtilsActions.tsx";
 import {ListCategories} from "./components/botonera_category/ListCategories.tsx";
 import ConfigMenu from "./components/config/ConfigMenu.tsx";
+import {SoundsActions} from "./components/botonera_actions/SoundsActions.tsx";
+import ItemSoundCreate from "./components/botonera_actions/ItemSoundCreate.tsx";
+import {ListSounds} from "./components/botonera_actions/ListSounds.tsx";
 let initialized = false;
 
 
@@ -21,6 +24,8 @@ function App() {
   const [hideCustomizeOptions, setHideCustomizeOptions] = useState<boolean|undefined>(true);
   const [currentAction, setCurrentAction] = useState<undefined|MenuAction>();
   const [currentConfig, setCurrentConfig] = useState<AppCustomConfig>();
+  const [currentSounds, setCurrentSounds] = useState<Array<SoundAction>>([]);
+  const [menuSound, setMenuSound] = useState<undefined|SoundAction>();
 
   listen<string>('app-updated',()=>{
     initializeData();
@@ -51,8 +56,14 @@ function App() {
         return <UtilsActions></UtilsActions>
       case ESTADOS_MENU.LIST_CATEGORY:
         return <ListCategories allCategories={menuCategories}></ListCategories>
+      case ESTADOS_MENU.LIST_SOUNDS:
+        return <ListSounds allSounds={currentSounds} setMenuSound={setMenuSound} setScreen={setStateMenu}></ListSounds>
       case ESTADOS_MENU.MENU_CONFIG:
         return <ConfigMenu returnFunction={setStateMenu}></ConfigMenu>
+      case ESTADOS_MENU.MENU_SONIDOS:
+        return <SoundsActions sounds={currentSounds} ></SoundsActions>
+      case ESTADOS_MENU.NEW_SOUND:
+        return <ItemSoundCreate menuSound={menuSound} setScreen={setStateMenu} ></ItemSoundCreate>
       default:
         break;
     }
@@ -74,6 +85,8 @@ function App() {
     setMenuCategories(await invoke("return_category_list", {}));
     setButtonsActions(await invoke("return_action_list", {}));
     setCurrentConfig(await invoke("get_config", {}));
+    setCurrentSounds(await invoke("get_sounds", {}));
+
   }
   function getBodyStyle():ReactElement{
     let stylesString = "";
@@ -95,8 +108,10 @@ function App() {
         }
         <button className={"textButton buttonBotoneraCabecera"} hidden={hideCustomizeOptions} onClick={()=>{setCurrentAction(undefined);setStateMenu(ESTADOS_MENU.NEW_ACTION)}}>Nueva Accion</button>
         <button className={"textButton buttonBotoneraCabecera"} hidden={hideCustomizeOptions} onClick={()=>{setStateMenu(ESTADOS_MENU.NEW_CATEGORY)}}>Nueva Categoria</button>
+        <button className={"textButton buttonBotoneraCabecera"} hidden={hideCustomizeOptions} onClick={()=>{setStateMenu(ESTADOS_MENU.NEW_SOUND)}}>Nuevo Sonido</button>
         <button className={"textButton buttonBotoneraCabecera"} hidden={hideCustomizeOptions} onClick={()=>{setStateMenu(ESTADOS_MENU.LIST_CATEGORY)}}>Listado Categorias</button>
         <button className={"textButton buttonBotoneraCabecera"} hidden={hideCustomizeOptions} onClick={()=>{setStateMenu(ESTADOS_MENU.LIST_ACTIONS)}}>Listado Acciones</button>
+        <button className={"textButton buttonBotoneraCabecera"} hidden={hideCustomizeOptions} onClick={()=>{setStateMenu(ESTADOS_MENU.LIST_SOUNDS)}}>Listado Sonidos</button>
         <button className={"textButton buttonBotoneraCabecera"} hidden={hideCustomizeOptions} onClick={()=>{setStateMenu(ESTADOS_MENU.MENU_CONFIG)}}>Configuracion</button>
       </div>
       <div className="cabeceraBotones">

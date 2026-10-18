@@ -36,3 +36,11 @@ type BodyStyles ={
 type AppCustomConfig = {
     background_image: String,
 }
+
+type SoundAction = {
+    sound_id: number,
+    sound_name: string,
+    sound_route: string,
+    sound_volume: number,
+    [key: string]: any,
+}

@@ -7,7 +7,10 @@ use crate::database::action_controller::{
 };
 use crate::database::category_controller::{delete_category_bd, get_all_category, save_category};
 use crate::database::config_controller::{get_custom_config, save_config_bd};
-use crate::structs::structs_custom::{AppCustomConfig, MenuAction};
+use crate::database::sound_controller::{
+    sound_delete, sound_execute, sound_upsert, sounds_get_all,
+};
+use crate::structs::structs_custom::{AppCustomConfig, DBSoundItem, MenuAction};
 use std::collections::HashMap;
 use structs::structs_custom::MenuCategory;
 use tauri::{AppHandle, Emitter};
@@ -89,10 +92,54 @@ async fn save_config(config_update: HashMap<String, String>, app: AppHandle) -> 
     }
 }
 
+#[tauri::command]
+async fn get_sounds() -> Result<Vec<DBSoundItem>, ()> {
+    let output = sounds_get_all().await;
+    if output.is_ok() {
+        let sounds = output.unwrap();
+        Ok(sounds)
+    } else {
+        Err(())
+    }
+}
+
+#[tauri::command]
+async fn save_sound(sound_string: String, app: AppHandle) -> Result<String, ()> {
+    let output = sound_upsert(sound_string).await;
+    if output.is_ok() {
+        let _emit = app.emit("app-updated", "STREAMER_TOKEN_TYPE");
+        Ok(String::from("Sonido actualizado"))
+    } else {
+        Err(())
+    }
+}
+
+#[tauri::command]
+async fn delete_sound(sound_id: u32, app: AppHandle) -> Result<String, ()> {
+    let output = sound_delete(sound_id).await;
+    if output.is_ok() {
+        let _emit = app.emit("app-updated", "STREAMER_TOKEN_TYPE");
+        Ok(String::from("Sonido eliminado"))
+    } else {
+        Err(())
+    }
+}
+
+#[tauri::command]
+async fn execute_sound(sound_id: u32) -> Result<String, ()> {
+    let output = sound_execute(sound_id).await;
+    if output.is_ok() {
+        Ok(String::from("Sonido ejecutado"))
+    } else {
+        Err(())
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let migrations: Vec<tauri_plugin_sql::Migration> = migrations::get_migrations();
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_sql::Builder::new().build())
         .plugin(
             tauri_plugin_sql::Builder::new()
@@ -108,7 +155,11 @@ pub fn run() {
             delete_action,
             delete_category,
             get_config,
-            save_config
+            save_config,
+            get_sounds,
+            delete_sound,
+            save_sound,
+            execute_sound,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

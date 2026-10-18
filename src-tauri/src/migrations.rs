@@ -26,9 +26,13 @@ pub fn get_migrations() -> Vec<Migration> {
             description:"add config table",
             sql:"CREATE TABLE config (key TEXT UNIQUE, value TEXT)",
             kind:MigrationKind::Up
+        },
+        Migration{
+            version:5,
+            description:"add sounds tables",
+            sql:"CREATE TABLE sound_board (sound_id INTEGER, sound_route TEXT , sound_volume INTEGER, sound_name TEXT UNIQUE, PRIMARY KEY(sound_id AUTOINCREMENT))",
+            kind:MigrationKind::Up
         }
-
-	
     ];
-    return migrations;
+    migrations
 }

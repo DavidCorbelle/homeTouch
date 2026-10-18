@@ -147,7 +147,7 @@ const CreateNewAction = ({setStateMenu, menuCategory, currentAction, voidActionF
             return(<ItemActionCreate forceUpdate={forceUpdateFunc} deleteSelf={deleteAction} deleteParam={deleteParam}  deleteEnvParam={deleteEnvParam} addEnvParam={addEnvParam} addParam={addParam} index={indexAction} action_item={action_item}></ItemActionCreate>)
         }):null}
         <button type={"button"} onClick={()=>{addAction()}}>Add action</button>
-        <button type="submit">Add</button>
+        <button type="submit">Guardar Accion</button>
     </form>
     </>);
 }

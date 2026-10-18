@@ -28,7 +28,7 @@ const CreateNewCategory = ({setStateMenu, menuCategory}:{setStateMenu:Function, 
         </label>
 
 
-        <button type="submit">Add</button>
+        <button type="submit">Guardar Categoria</button>
     </form>
     </>);
 }

@@ -13,6 +13,7 @@ pub async fn get_custom_config() -> Result<AppCustomConfig, ()> {
         for row in result_unwrap {
             let key: String = row.get("key");
             let value: String = row.get("value");
+
             config_map.entry(key).insert_entry(value);
         }
         let config_string = serde_json::to_string(&config_map).unwrap();

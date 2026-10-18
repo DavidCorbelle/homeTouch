@@ -32,3 +32,11 @@ pub struct EnvParamsCommand {
 pub struct AppCustomConfig {
     pub background_image: Option<String>,
 }
+
+#[derive(Deserialize, Serialize)]
+pub struct DBSoundItem {
+    pub sound_id: u32,
+    pub sound_name: String,
+    pub sound_route: String,
+    pub sound_volume: u32,
+}

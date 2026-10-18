@@ -6,5 +6,8 @@ export const ESTADOS_MENU = {
     EDIT_ACTION:-4,
     MENU_UTILS:-5,
     MENU_CONFIG:-6,
+    MENU_SONIDOS:-7,
+    NEW_SOUND:-8,
+    LIST_SOUNDS:-9
 }
 
